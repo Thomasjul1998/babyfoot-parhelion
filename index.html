@@ -70,6 +70,11 @@
       <div id="listWrap">
         <div class="empty">Aucun participant pour l'instant — sois le premier !</div>
       </div>
+      <h3 style="margin:24px 0 8px 0">Équipes générées</h3>
+<div id="teamsWrap">
+  <div class="empty">Aucune équipe générée</div>
+</div>
+
     </main>
   </div>
 
@@ -92,6 +97,56 @@
 
     function save(list){ localStorage.setItem(STORAGE_KEY, JSON.stringify(list)); }
 
+const teamBtn = document.getElementById('teamBtn');
+const teamsWrap = document.getElementById('teamsWrap');
+
+function shuffleArray(arr) {
+  return arr
+    .map(value => ({ value, sort: Math.random() }))
+    .sort((a, b) => a.sort - b.sort)
+    .map(({ value }) => value);
+}
+
+function formTeams() {
+  const list = load();
+  if (list.length < 2) {
+    teamsWrap.innerHTML = '<div class="empty">Pas assez de participants pour former une équipe.</div>';
+    return;
+  }
+
+  const mixed = shuffleArray(list);
+  let html = "";
+
+  for (let i = 0; i < mixed.length; i += 2) {
+    if (mixed[i + 1]) {
+      html += `
+        <div class="team" style="
+          background:rgba(255,255,255,0.03);
+          padding:10px 12px;
+          margin:8px 0;
+          border-radius:8px;">
+          <strong>Équipe :</strong> ${mixed[i].prenom} & ${mixed[i+1].prenom}
+        </div>
+      `;
+    } else {
+      html += `
+        <div class="team" style="
+          background:rgba(255,255,255,0.03);
+          padding:10px 12px;
+          margin:8px 0;
+          border-radius:8px;">
+          <strong>Participant sans équipe :</strong> ${mixed[i].prenom}
+        </div>
+      `;
+    }
+  }
+
+  teamsWrap.innerHTML = html;
+}
+
+teamBtn.addEventListener('click', formTeams);
+
+    
     function render(){
       const list = load();
       if(!list.length){
