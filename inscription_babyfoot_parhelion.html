@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>tournoi babyfoot Parhelion 11/12 — Inscription</title>
+  <style>
+    :root{--bg:#0f172a;--card:#0b1220;--accent:#06b6d4;--muted:#94a3b8;--glass:rgba(255,255,255,0.04)}
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;background:linear-gradient(180deg,#071029 0%, #071522 60%);color:#e6eef6;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+    .container{width:100%;max-width:900px;background:linear-gradient(180deg,rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:14px;padding:22px;box-shadow:0 8px 30px rgba(2,6,23,0.6);border:1px solid rgba(255,255,255,0.04)}
+    header{display:flex;gap:16px;align-items:center;justify-content:space-between}
+    .title{display:flex;flex-direction:column}
+    h1{margin:0;font-size:20px;letter-spacing:0.2px}
+    p.lead{margin:2px 0 0;color:var(--muted);font-size:13px}
+    form{margin-top:18px;display:grid;grid-template-columns:1fr 220px;gap:12px;align-items:end}
+    label{font-size:13px;color:var(--muted);display:block;margin-bottom:6px}
+    input[type=text]{width:100%;padding:10px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:var(--glass);color:inherit}
+    .poste{display:flex;gap:8px;align-items:center}
+    .poste label{display:inline-flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;background:transparent;border:1px solid rgba(255,255,255,0.03);cursor:pointer}
+    .poste input{accent-color:var(--accent)}
+    .actions{display:flex;gap:8px}
+    button{padding:10px 12px;border-radius:8px;border:0;background:var(--accent);color:#042027;font-weight:600;cursor:pointer}
+    button.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted);font-weight:600}
+    main{margin-top:18px}
+    table{width:100%;border-collapse:collapse;margin-top:12px}
+    th,td{padding:10px 12px;text-align:left;border-bottom:1px solid rgba(255,255,255,0.03);font-size:14px}
+    th{color:var(--muted);font-weight:600}
+    .empty{padding:20px;border-radius:8px;background:rgba(255,255,255,0.02);color:var(--muted);text-align:center}
+    .controls{display:flex;gap:8px;align-items:center}
+    @media (max-width:700px){form{grid-template-columns:1fr;align-items:stretch} .actions{justify-content:space-between} }
+  </style>
+</head>
+<body>
+  <div class="container" role="main">
+    <header>
+      <div class="title">
+        <h1>tournoi babyfoot Parhelion 11/12</h1>
+        <p class="lead">Inscription joueur — indique ton prénom et ton poste (attaque ou défense)</p>
+      </div>
+      <div class="controls">
+        <button id="exportBtn" class="ghost" title="Exporter la liste au format CSV">Exporter CSV</button>
+        <button id="clearBtn" class="ghost" title="Vider la liste">Tout effacer</button>
+      </div>
+    </header>
+
+    <form id="regForm" autocomplete="off">
+      <div>
+        <label for="prenom">Prénom</label>
+        <input id="prenom" name="prenom" type="text" placeholder="Ex. Alice" required maxlength="40" />
+      </div>
+
+      <div>
+        <label>Poste</label>
+        <div class="poste" role="radiogroup" aria-labelledby="posteLabel">
+          <label for="attaque"><input id="attaque" type="radio" name="poste" value="Attaque" required> Attaque</label>
+          <label for="defense"><input id="defense" type="radio" name="poste" value="Défense"> Défense</label>
+        </div>
+      </div>
+
+      <div class="actions" style="grid-column:1/-1">
+        <button type="submit">S'inscrire</button>
+        <button type="button" id="resetBtn" class="ghost">Réinitialiser</button>
+      </div>
+    </form>
+
+    <main>
+      <h3 style="margin:0 0 8px 0">Participants</h3>
+      <div id="listWrap">
+        <div class="empty">Aucun participant pour l'instant — sois le premier !</div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const form = document.getElementById('regForm');
+    const prenomInput = document.getElementById('prenom');
+    const listWrap = document.getElementById('listWrap');
+    const exportBtn = document.getElementById('exportBtn');
+    const clearBtn = document.getElementById('clearBtn');
+    const resetBtn = document.getElementById('resetBtn');
+
+    const STORAGE_KEY = 'parhelion_babyfoot_11_12_registrants_v1';
+
+    function load() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        return raw ? JSON.parse(raw) : [];
+      } catch (e) { return []; }
+    }
+
+    function save(list){ localStorage.setItem(STORAGE_KEY, JSON.stringify(list)); }
+
+    function render(){
+      const list = load();
+      if(!list.length){
+        listWrap.innerHTML = '<div class="empty">Aucun participant pour l\'instant — sois le premier !</div>';
+        return;
+      }
+
+      const rows = list.map((p, i)=>`<tr data-i="${i}"><td>${p.prenom}</td><td>${p.poste}</td><td><button data-remove="${i}" class="ghost">Supprimer</button></td></tr>`).join('');
+      listWrap.innerHTML = `
+        <table aria-live="polite">
+          <thead><tr><th>Prénom</th><th>Poste</th><th></th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      `;
+
+      listWrap.querySelectorAll('[data-remove]').forEach(btn=>btn.addEventListener('click', ()=>{
+        removeAt(Number(btn.getAttribute('data-remove')));
+      }));
+    }
+
+    function addParticipant(prenom, poste){
+      const list = load();
+      list.push({prenom:prenom.trim(), poste});
+      save(list);
+      render();
+    }
+
+    function removeAt(index){
+      const list = load();
+      if(index<0||index>=list.length) return;
+      list.splice(index,1);
+      save(list);
+      render();
+    }
+
+    function clearAll(){
+      if(confirm('Effacer tous les participants ?')){
+        localStorage.removeItem(STORAGE_KEY);
+        render();
+      }
+    }
+
+    form.addEventListener('submit', e=>{
+      e.preventDefault();
+      const prenom = prenomInput.value.trim();
+      const poste = form.elements['poste'].value;
+      if(!prenom){ alert('Merci de renseigner votre prénom.'); prenomInput.focus(); return }
+      if(!poste){ alert('Merci de choisir un poste (Attaque ou Défense).'); return }
+      addParticipant(prenom, poste);
+      form.reset();
+      prenomInput.focus();
+    });
+
+    resetBtn.addEventListener('click', ()=> form.reset());
+    exportBtn.addEventListener('click', ()=>{
+      const list = load();
+      if(!list.length){ alert('Aucun participant à exporter.'); return }
+      const csv = [ ['Prénom','Poste'], ...list.map(r=>[r.prenom, r.poste]) ]
+                  .map(row=>row.map(cell=>`"${String(cell).replace(/"/g,'""')}"`).join(','))
+                  .join('\n');
+      const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href = url; a.download = 'inscriptions_parhelion_11-12.csv';
+      document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+    });
+
+    clearBtn.addEventListener('click', clearAll);
+
+    render();
+  </script>
+</body>
+</html>
