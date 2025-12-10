@@ -5,35 +5,140 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Tournoi babyfoot Parhelion 11/12</title>
 <style>
-:root{--bg:#0f172a;--card:#0b1220;--accent:#06b6d4;--muted:#94a3b8;--glass:rgba(255,255,255,0.04)}
-body{margin:0;font-family:Inter,system-ui,sans-serif;background:linear-gradient(180deg,#071029 0%,#071522 60%);color:#e6eef6;min-height:100vh;display:flex;justify-content:center;align-items:flex-start;padding:24px}
-.container{width:100%;max-width:900px;background:var(--card);border-radius:14px;padding:24px;box-shadow:0 8px 30px rgba(2,6,23,0.6);}
-header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap}
-.title{margin-bottom:16px}
-h1{margin:0;font-size:22px;color:#fff}
-p.lead{margin:2px 0 0;color:var(--muted)}
-form{display:grid;grid-template-columns:1fr 220px;gap:12px;align-items:end;margin-bottom:20px}
-label{font-size:13px;color:var(--muted);margin-bottom:6px;display:block}
-input[type=text]{width:100%;padding:10px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:var(--glass);color:#e6eef6}
-.poste{display:flex;gap:8px}
-.poste label{display:inline-flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;background:transparent;border:1px solid rgba(255,255,255,0.03);cursor:pointer}
-.poste input{accent-color:var(--accent)}
-.actions{display:flex;gap:8px}
-button{padding:10px 12px;border-radius:8px;border:0;background:var(--accent);color:#042027;font-weight:600;cursor:pointer}
-button.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted)}
-main{margin-top:20px}
-table{width:100%;border-collapse:collapse;margin-top:12px}
-th,td{padding:10px 12px;text-align:left;border-bottom:1px solid rgba(255,255,255,0.03)}
-th{color:var(--muted);font-weight:600}
-.empty{padding:20px;border-radius:8px;background:rgba(255,255,255,0.02);color:var(--muted);text-align:center}
-.team{background:rgba(255,255,255,0.03);padding:10px 12px;margin:8px 0;border-radius:8px}
+:root{
+  --bg:#0f172a;
+  --card:#0b1220;
+  --accent:#06b6d4;
+  --muted:#94a3b8;
+  --glass:rgba(255,255,255,0.04);
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Inter,system-ui,sans-serif;
+  background:linear-gradient(180deg,#071029 0%,#071522 60%);
+  color:#e6eef6;
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:flex-start;
+  padding:24px;
+}
+.container{
+  width:100%;
+  max-width:900px;
+  background:var(--card);
+  border-radius:14px;
+  padding:24px;
+  box-shadow:0 8px 30px rgba(2,6,23,0.6);
+}
+header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  flex-wrap:wrap;
+  margin-bottom:20px;
+}
+h1{
+  margin:0;
+  font-size:24px;
+  color:#fff;
+}
+p.lead{
+  margin:4px 0 0 0;
+  color:var(--muted);
+  font-size:14px;
+}
+form{
+  display:grid;
+  grid-template-columns:1fr 220px;
+  gap:12px;
+  align-items:end;
+  margin-bottom:24px;
+}
+label{
+  font-size:13px;
+  color:var(--muted);
+  margin-bottom:6px;
+  display:block;
+}
+input[type=text]{
+  width:100%;
+  padding:10px 12px;
+  border-radius:8px;
+  border:1px solid rgba(255,255,255,0.04);
+  background:var(--glass);
+  color:#e6eef6;
+}
+.poste{
+  display:flex;
+  gap:8px;
+}
+.poste label{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:8px 10px;
+  border-radius:8px;
+  background:transparent;
+  border:1px solid rgba(255,255,255,0.03);
+  cursor:pointer;
+}
+.poste input{accent-color:var(--accent);}
+.actions{display:flex;gap:8px;}
+button{
+  padding:10px 12px;
+  border-radius:8px;
+  border:0;
+  background:var(--accent);
+  color:#042027;
+  font-weight:600;
+  cursor:pointer;
+}
+button.ghost{
+  background:transparent;
+  border:1px solid rgba(255,255,255,0.06);
+  color:var(--muted);
+}
+main{margin-top:20px;}
+table{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:12px;
+  background:rgba(255,255,255,0.02);
+  border-radius:8px;
+  overflow:hidden;
+}
+th,td{
+  padding:12px;
+  text-align:left;
+  border-bottom:1px solid rgba(255,255,255,0.03);
+}
+th{color:var(--muted); font-weight:600;}
+.empty{
+  padding:20px;
+  border-radius:8px;
+  background:rgba(255,255,255,0.02);
+  color:var(--muted);
+  text-align:center;
+}
+.team{
+  background:rgba(6,182,212,0.15);
+  padding:12px;
+  margin:8px 0;
+  border-radius:8px;
+  display:flex;
+  justify-content:space-between;
+  color:#fff;
+  font-weight:600;
+}
 @media(max-width:700px){form{grid-template-columns:1fr;align-items:stretch}}
 </style>
 </head>
 <body>
 <div class="container">
 <header>
-  <div class="title">
+  <div>
     <h1>Tournoi babyfoot Parhelion 11/12</h1>
     <p class="lead">Inscription joueur — indique ton prénom et ton poste</p>
   </div>
@@ -73,49 +178,52 @@ const teamsWrap = document.getElementById('teamsWrap');
 const teamBtn = document.getElementById('teamBtn');
 
 // === CONFIG ===
-const SHEETMONKEY_KEY = '<TON_KEY_SHEETMONKEY>'; // remplacer par ta clé SheetMonkey
+const SHEETMONKEY_KEY = '<TON_KEY_SHEETMONKEY>'; // Remplace par ta clé
 const SHEETMONKEY_API = `https://api.sheetmonkey.io/api/${SHEETMONKEY_KEY}`;
 const SHEETMONKEY_FORM = `https://api.sheetmonkey.io/form/${SHEETMONKEY_KEY}`;
 
-// Charger participants depuis Google Sheet
+// Charger participants
 async function loadList() {
   try {
     const res = await fetch(SHEETMONKEY_API);
     const data = await res.json();
-    return data.map(r => ({ prenom: r.Prénom, poste: r.Poste }));
-  } catch(e) { console.error(e); return []; }
+    return data.map(r=>({prenom:r.Prénom, poste:r.Poste}));
+  } catch(e){ console.error(e); return []; }
 }
 
 // Afficher liste
 async function renderList() {
   const list = await loadList();
   if(!list.length){
-    listWrap.innerHTML = '<div class="empty">Aucun participant</div>';
+    listWrap.innerHTML='<div class="empty">Aucun participant</div>';
     return;
   }
-  const rows = list.map(p => `<tr><td>${p.prenom}</td><td>${p.poste}</td></tr>`).join('');
-  listWrap.innerHTML = `<table><thead><tr><th>Prénom</th><th>Poste</th></tr></thead><tbody>${rows}</tbody></table>`;
+  const rows = list.map(p=>`<tr><td>${p.prenom}</td><td>${p.poste}</td></tr>`).join('');
+  listWrap.innerHTML=`<table>
+    <thead><tr><th>Prénom</th><th>Poste</th></tr></thead>
+    <tbody>${rows}</tbody>
+  </table>`;
 }
 
 // Soumettre formulaire
-form.addEventListener('submit', async e => {
+form.addEventListener('submit', async e=>{
   e.preventDefault();
   const prenom = prenomInput.value.trim();
   const poste = form.elements['poste'].value;
-  if(!prenom || !poste) return;
-  try {
+  if(!prenom||!poste) return;
+  try{
     await fetch(SHEETMONKEY_FORM,{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ Prénom: prenom, Poste: poste })
+      body:JSON.stringify({Prénom:prenom,Poste:poste})
     });
     form.reset();
     renderList();
-  } catch(e) { alert('Erreur lors de l’inscription'); console.error(e); }
+  } catch(e){ alert('Erreur lors de l’inscription'); console.error(e);}
 });
 
 // Former équipes
-teamBtn.addEventListener('click', async () => {
+teamBtn.addEventListener('click', async ()=>{
   const list = await loadList();
   if(list.length<2){ teamsWrap.innerHTML='<div class="empty">Pas assez de participants</div>'; return; }
   let attaquants = list.filter(p=>p.poste==='Attaque').sort(()=>Math.random()-0.5);
@@ -124,12 +232,12 @@ teamBtn.addEventListener('click', async () => {
   while(attaquants.length && defenseurs.length){
     const a = attaquants.shift();
     const d = defenseurs.shift();
-    html += `<div class="team"><strong>Équipe :</strong> ${a.prenom} & ${d.prenom}</div>`;
+    html+=`<div class="team"><span>${a.prenom}</span><span>${d.prenom}</span></div>`;
   }
   [...attaquants,...defenseurs].forEach(p=>{
-    html += `<div class="team"><strong>Participant sans équipe :</strong> ${p.prenom}</div>`;
+    html+=`<div class="team"><span>Participant sans équipe: ${p.prenom}</span></div>`;
   });
-  teamsWrap.innerHTML = html;
+  teamsWrap.innerHTML=html;
 });
 
 // Initial
