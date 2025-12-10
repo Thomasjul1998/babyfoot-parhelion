@@ -5,15 +5,11 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Tournoi babyfoot Parhelion 11/12</title>
 <style>
-:root{
-  --bg:#0f172a;
-  --card:#0b1220;
-  --accent:#06b6d4;
-  --muted:#94a3b8;
-  --glass:rgba(255,255,255,0.04);
+:root {
+  --bg:#0f172a; --card:#0b1220; --accent:#06b6d4; --muted:#94a3b8; --glass:rgba(255,255,255,0.04);
 }
-*{box-sizing:border-box}
-body{
+*{box-sizing:border-box;}
+body {
   margin:0;
   font-family:Inter,system-ui,sans-serif;
   background:linear-gradient(180deg,#071029 0%,#071522 60%);
@@ -21,10 +17,9 @@ body{
   min-height:100vh;
   display:flex;
   justify-content:center;
-  align-items:flex-start;
   padding:24px;
 }
-.container{
+.container {
   width:100%;
   max-width:900px;
   background:var(--card);
@@ -32,37 +27,24 @@ body{
   padding:24px;
   box-shadow:0 8px 30px rgba(2,6,23,0.6);
 }
-header{
+header {
   display:flex;
   justify-content:space-between;
   align-items:center;
   flex-wrap:wrap;
   margin-bottom:20px;
 }
-h1{
-  margin:0;
-  font-size:24px;
-  color:#fff;
-}
-p.lead{
-  margin:4px 0 0 0;
-  color:var(--muted);
-  font-size:14px;
-}
-form{
+h1 {margin:0;font-size:24px;color:#fff;}
+p.lead {margin:4px 0 0 0;color:var(--muted);font-size:14px;}
+form {
   display:grid;
   grid-template-columns:1fr 220px;
   gap:12px;
   align-items:end;
   margin-bottom:24px;
 }
-label{
-  font-size:13px;
-  color:var(--muted);
-  margin-bottom:6px;
-  display:block;
-}
-input[type=text]{
+label {font-size:13px;color:var(--muted);margin-bottom:6px;display:block;}
+input[type=text] {
   width:100%;
   padding:10px 12px;
   border-radius:8px;
@@ -70,11 +52,11 @@ input[type=text]{
   background:var(--glass);
   color:#e6eef6;
 }
-.poste{
+.poste {
   display:flex;
   gap:8px;
 }
-.poste label{
+.poste label {
   display:inline-flex;
   align-items:center;
   gap:8px;
@@ -84,9 +66,9 @@ input[type=text]{
   border:1px solid rgba(255,255,255,0.03);
   cursor:pointer;
 }
-.poste input{accent-color:var(--accent);}
-.actions{display:flex;gap:8px;}
-button{
+.poste input {accent-color:var(--accent);}
+.actions {display:flex;gap:8px;}
+button {
   padding:10px 12px;
   border-radius:8px;
   border:0;
@@ -95,13 +77,13 @@ button{
   font-weight:600;
   cursor:pointer;
 }
-button.ghost{
+button.ghost {
   background:transparent;
   border:1px solid rgba(255,255,255,0.06);
   color:var(--muted);
 }
-main{margin-top:20px;}
-table{
+main {margin-top:20px;}
+table {
   width:100%;
   border-collapse:collapse;
   margin-top:12px;
@@ -109,20 +91,20 @@ table{
   border-radius:8px;
   overflow:hidden;
 }
-th,td{
+th,td {
   padding:12px;
   text-align:left;
   border-bottom:1px solid rgba(255,255,255,0.03);
 }
-th{color:var(--muted); font-weight:600;}
-.empty{
+th {color:var(--muted); font-weight:600;}
+.empty {
   padding:20px;
   border-radius:8px;
   background:rgba(255,255,255,0.02);
   color:var(--muted);
   text-align:center;
 }
-.team{
+.team {
   background:rgba(6,182,212,0.15);
   padding:12px;
   margin:8px 0;
@@ -159,43 +141,41 @@ th{color:var(--muted); font-weight:600;}
   </div>
   <div class="actions" style="grid-column:1/-1">
     <button type="submit">S'inscrire</button>
+    <button type="button" id="clearBtn" class="ghost">Tout effacer</button>
   </div>
 </form>
 
 <main>
 <h3>Participants</h3>
-<div id="listWrap"><div class="empty">Chargement...</div></div>
+<div id="listWrap"><div class="empty">Aucun participant pour l'instant</div></div>
 <h3>Équipes générées</h3>
 <div id="teamsWrap"><div class="empty">Aucune équipe générée</div></div>
 </main>
 </div>
 
 <script>
+const STORAGE_KEY = 'babyfoot_participants';
 const form = document.getElementById('regForm');
 const prenomInput = document.getElementById('prenom');
 const listWrap = document.getElementById('listWrap');
 const teamsWrap = document.getElementById('teamsWrap');
 const teamBtn = document.getElementById('teamBtn');
+const clearBtn = document.getElementById('clearBtn');
 
-// === CONFIG ===
-const SHEETMONKEY_KEY = '<TON_KEY_SHEETMONKEY>'; // Remplace par ta clé
-const SHEETMONKEY_API = `https://api.sheetmonkey.io/api/${SHEETMONKEY_KEY}`;
-const SHEETMONKEY_FORM = `https://api.sheetmonkey.io/form/${SHEETMONKEY_KEY}`;
-
-// Charger participants
-async function loadList() {
-  try {
-    const res = await fetch(SHEETMONKEY_API);
-    const data = await res.json();
-    return data.map(r=>({prenom:r.Prénom, poste:r.Poste}));
-  } catch(e){ console.error(e); return []; }
+function load(){
+  const data = localStorage.getItem(STORAGE_KEY);
+  return data ? JSON.parse(data) : [];
 }
 
-// Afficher liste
-async function renderList() {
-  const list = await loadList();
+function save(list){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+}
+
+function render(){
+  const list = load();
   if(!list.length){
-    listWrap.innerHTML='<div class="empty">Aucun participant</div>';
+    listWrap.innerHTML='<div class="empty">Aucun participant pour l\'instant</div>';
+    teamsWrap.innerHTML='<div class="empty">Aucune équipe générée</div>';
     return;
   }
   const rows = list.map(p=>`<tr><td>${p.prenom}</td><td>${p.poste}</td></tr>`).join('');
@@ -205,27 +185,33 @@ async function renderList() {
   </table>`;
 }
 
-// Soumettre formulaire
-form.addEventListener('submit', async e=>{
+// Formulaire
+form.addEventListener('submit', e=>{
   e.preventDefault();
   const prenom = prenomInput.value.trim();
   const poste = form.elements['poste'].value;
-  if(!prenom||!poste) return;
-  try{
-    await fetch(SHEETMONKEY_FORM,{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({Prénom:prenom,Poste:poste})
-    });
-    form.reset();
-    renderList();
-  } catch(e){ alert('Erreur lors de l’inscription'); console.error(e);}
+  if(!prenom || !poste) return;
+  const list = load();
+  list.push({prenom, poste});
+  save(list);
+  form.reset();
+  prenomInput.focus();
+  render();
 });
 
-// Former équipes
-teamBtn.addEventListener('click', async ()=>{
-  const list = await loadList();
-  if(list.length<2){ teamsWrap.innerHTML='<div class="empty">Pas assez de participants</div>'; return; }
+// Effacer tout
+clearBtn.addEventListener('click', ()=>{
+  if(confirm('Effacer tous les participants ?')){
+    localStorage.removeItem(STORAGE_KEY);
+    render();
+  }
+});
+
+// Former équipes attaquant + défenseur
+teamBtn.addEventListener('click', ()=>{
+  const list = load();
+  if(list.length < 2){ teamsWrap.innerHTML='<div class="empty">Pas assez de participants</div>'; return; }
+
   let attaquants = list.filter(p=>p.poste==='Attaque').sort(()=>Math.random()-0.5);
   let defenseurs = list.filter(p=>p.poste==='Défense').sort(()=>Math.random()-0.5);
   let html='';
@@ -240,8 +226,8 @@ teamBtn.addEventListener('click', async ()=>{
   teamsWrap.innerHTML=html;
 });
 
-// Initial
-renderList();
+// Initial render
+render();
 </script>
 </body>
 </html>
