@@ -71,10 +71,9 @@
         <div class="empty">Aucun participant pour l'instant — sois le premier !</div>
       </div>
       <h3 style="margin:24px 0 8px 0">Équipes générées</h3>
-<div id="teamsWrap">
-  <div class="empty">Aucune équipe générée</div>
-</div>
-
+      <div id="teamsWrap">
+        <div class="empty">Aucune équipe générée</div>
+      </div>
     </main>
   </div>
 
@@ -85,6 +84,8 @@
     const exportBtn = document.getElementById('exportBtn');
     const clearBtn = document.getElementById('clearBtn');
     const resetBtn = document.getElementById('resetBtn');
+    const teamBtn = document.getElementById('teamBtn');
+    const teamsWrap = document.getElementById('teamsWrap');
 
     const STORAGE_KEY = 'parhelion_babyfoot_11_12_registrants_v1';
 
@@ -97,56 +98,6 @@
 
     function save(list){ localStorage.setItem(STORAGE_KEY, JSON.stringify(list)); }
 
-const teamBtn = document.getElementById('teamBtn');
-const teamsWrap = document.getElementById('teamsWrap');
-
-function shuffleArray(arr) {
-  return arr
-    .map(value => ({ value, sort: Math.random() }))
-    .sort((a, b) => a.sort - b.sort)
-    .map(({ value }) => value);
-}
-
-function formTeams() {
-  const list = load();
-  if (list.length < 2) {
-    teamsWrap.innerHTML = '<div class="empty">Pas assez de participants pour former une équipe.</div>';
-    return;
-  }
-
-  const mixed = shuffleArray(list);
-  let html = "";
-
-  for (let i = 0; i < mixed.length; i += 2) {
-    if (mixed[i + 1]) {
-      html += `
-        <div class="team" style="
-          background:rgba(255,255,255,0.03);
-          padding:10px 12px;
-          margin:8px 0;
-          border-radius:8px;">
-          <strong>Équipe :</strong> ${mixed[i].prenom} & ${mixed[i+1].prenom}
-        </div>
-      `;
-    } else {
-      html += `
-        <div class="team" style="
-          background:rgba(255,255,255,0.03);
-          padding:10px 12px;
-          margin:8px 0;
-          border-radius:8px;">
-          <strong>Participant sans équipe :</strong> ${mixed[i].prenom}
-        </div>
-      `;
-    }
-  }
-
-  teamsWrap.innerHTML = html;
-}
-
-teamBtn.addEventListener('click', formTeams);
-
-    
     function render(){
       const list = load();
       if(!list.length){
@@ -162,7 +113,7 @@ teamBtn.addEventListener('click', formTeams);
         </table>
       `;
 
-      listWrap.querySelectorAll('[data-remove]').forEach(btn=>btn.addEventListener('click', ()=>{
+      listWrap.querySelectorAll('[data-remove]').forEach(btn=>btn.addEventListener('click', ()=> {
         removeAt(Number(btn.getAttribute('data-remove')));
       }));
     }
@@ -201,6 +152,7 @@ teamBtn.addEventListener('click', formTeams);
     });
 
     resetBtn.addEventListener('click', ()=> form.reset());
+
     exportBtn.addEventListener('click', ()=>{
       const list = load();
       if(!list.length){ alert('Aucun participant à exporter.'); return }
@@ -214,6 +166,49 @@ teamBtn.addEventListener('click', formTeams);
     });
 
     clearBtn.addEventListener('click', clearAll);
+
+    function shuffleArray(arr) {
+      return arr
+        .map(value => ({ value, sort: Math.random() }))
+        .sort((a, b) => a.sort - b.sort)
+        .map(({ value }) => value);
+    }
+
+    function formTeams() {
+      const list = load();
+      if (list.length < 2) {
+        teamsWrap.innerHTML = '<div class="empty">Pas assez de participants pour former une équipe.</div>';
+        return;
+      }
+
+      // Séparer attaquants et défenseurs
+      let attaquants = shuffleArray(list.filter(p => p.poste === 'Attaque'));
+      let defenseurs = shuffleArray(list.filter(p => p.poste === 'Défense'));
+      let html = '';
+
+      while (attaquants.length || defenseurs.length) {
+        const a = attaquants.shift();
+        const d = defenseurs.shift();
+
+        if(a && d){
+          html += `<div class="team" style="background:rgba(255,255,255,0.03);padding:10px 12px;margin:8px 0;border-radius:8px;">
+                    <strong>Équipe :</strong> ${a.prenom} & ${d.prenom}
+                  </div>`;
+        } else if(a){
+          html += `<div class="team" style="background:rgba(255,255,255,0.03);padding:10px 12px;margin:8px 0;border-radius:8px;">
+                    <strong>Participant sans équipe :</strong> ${a.prenom}
+                  </div>`;
+        } else if(d){
+          html += `<div class="team" style="background:rgba(255,255,255,0.03);padding:10px 12px;margin:8px 0;border-radius:8px;">
+                    <strong>Participant sans équipe :</strong> ${d.prenom}
+                  </div>`;
+        }
+      }
+
+      teamsWrap.innerHTML = html;
+    }
+
+    teamBtn.addEventListener('click', formTeams);
 
     render();
   </script>
